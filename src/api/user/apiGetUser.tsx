@@ -3,7 +3,7 @@ import axios, { AxiosError } from "axios";
 const baseUrl =
   typeof window === "undefined"
     ? process.env.NEXT_PUBLIC_API_URL // Chạy ở server
-    : ""; // Chạy ở browser thì dùng relative
+    : "https://api.goixegiare.pro.vn"; // Chạy ở browser thì dùng relative
 async function getUser(id: string) {
   try {
     const { data } = await axios.get(`${baseUrl}/api/user?id=${id}`);
@@ -45,15 +45,9 @@ async function getAllUsers() {
     let errorMessage = "An unknown error occurred";
     if (typeof error === "object" && error !== null) {
       const axiosError = error as AxiosError<{ message?: string }>;
-      if (
-        axiosError.response?.data?.message &&
-        typeof axiosError.response.data.message === "string"
-      ) {
+      if (axiosError.response?.data?.message && typeof axiosError.response.data.message === "string") {
         errorMessage = axiosError.response.data.message;
-      } else if (
-        "message" in error &&
-        typeof (error as Error).message === "string"
-      ) {
+      } else if ("message" in error && typeof (error as Error).message === "string") {
         errorMessage = (error as Error).message;
       }
     }

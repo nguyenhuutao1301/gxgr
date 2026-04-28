@@ -10,7 +10,7 @@ type GetPostslicePage = {
   hasNextPage: boolean;
   hasPrevPage: boolean;
 };
-const apibase = process.env.NEXT_PUBLIC_API_URL ?? siteConfig.domain;
+const apibase = process.env.NEXT_PUBLIC_API_URL ?? "https://api.goixegiare.pro.vn";
 export async function getPost(slug: string) {
   try {
     const url = `${apibase}/api/posts/${slug}`;
@@ -64,9 +64,7 @@ async function getPostById(_id: string) {
 // Hàm lấy tất cả bài viết, có thể giới hạn số lượng bằng limit
 async function getAllPosts(limit?: number) {
   try {
-    const url = limit
-      ? `${apibase}/api/posts/get-all?limit=${limit}`
-      : `${apibase}/api/posts/get-all`;
+    const url = limit ? `${apibase}/api/posts/get-all?limit=${limit}` : `${apibase}/api/posts/get-all`;
     const response = await fetch(url, {
       next: { revalidate: 60 * 60 * 24 * 30 * 12 },
       headers: {
@@ -79,8 +77,7 @@ async function getAllPosts(limit?: number) {
     const data = await response.json(); // 👈 lấy body JSON
     return { success: true, data };
   } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error occurred";
+    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
     return {
       success: false,
       error: errorMessage,
@@ -89,9 +86,7 @@ async function getAllPosts(limit?: number) {
 }
 async function getFilterTagsPosts(tags: string[], limit?: number) {
   try {
-    const url = limit
-      ? `${apibase}/api/posts/filter/tags?limit=${limit}`
-      : `${apibase}/api/posts/filter/tags`;
+    const url = limit ? `${apibase}/api/posts/filter/tags?limit=${limit}` : `${apibase}/api/posts/filter/tags`;
 
     const res = await fetch(url, {
       method: "POST",
@@ -121,10 +116,7 @@ async function getFilterTagsPosts(tags: string[], limit?: number) {
   }
 }
 
-const getPostslicePage = async (
-  currentPage?: number,
-  limit?: number
-): Promise<GetPostslicePage> => {
+const getPostslicePage = async (currentPage?: number, limit?: number): Promise<GetPostslicePage> => {
   try {
     if (!currentPage || !limit) {
       throw new Error("Page and limit parameters are required");
@@ -165,9 +157,7 @@ const getPostslicePage = async (
 };
 async function searchPosts(input: string) {
   try {
-    const response = await axiosInstance(
-      `/api/posts/find/query?q=${encodeURIComponent(input)}&limit=10`
-    );
+    const response = await axiosInstance(`/api/posts/find/query?q=${encodeURIComponent(input)}&limit=10`);
     return {
       success: true,
       data: response?.data?.data || [],
@@ -175,17 +165,9 @@ async function searchPosts(input: string) {
   } catch (error: unknown) {
     return {
       success: false,
-      error:
-        ((error as AxiosError).response?.data as { message: string })
-          ?.message || (error as AxiosError).message,
+      error: ((error as AxiosError).response?.data as { message: string })?.message || (error as AxiosError).message,
     };
   }
 }
 
-export {
-  getPostslicePage,
-  getAllPosts,
-  getFilterTagsPosts,
-  getPostById,
-  searchPosts,
-};
+export { getPostslicePage, getAllPosts, getFilterTagsPosts, getPostById, searchPosts };

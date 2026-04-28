@@ -1,7 +1,7 @@
 // utils/axios.txs
 import axios from "axios";
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://goixegiare.pro.vn",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://api.goixegiare.pro.vn",
   withCredentials: true,
   timeout: 10000,
   headers: {
@@ -19,7 +19,7 @@ axiosInstance.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // Interceptor cho response
@@ -28,11 +28,7 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     // Nếu lỗi 401 và chưa thử refresh
-    if (
-      error.response &&
-      error.response.status === 401 &&
-      !originalRequest._retry
-    ) {
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         // Gọi API refresh token (cookie refreshToken sẽ tự động gửi lên nhờ withCredentials)
@@ -52,6 +48,6 @@ axiosInstance.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 export default axiosInstance;
